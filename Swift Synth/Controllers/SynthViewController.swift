@@ -6,7 +6,7 @@ class SynthViewController: UIViewController {
     private lazy var parameterLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
-        label.text = "Frequency: 0 Hz  Amplitude: 0%"
+        label.text = formattedText(frequency: 0, amplitude: 0, isPlaying: Synth.shared.isPlaying())
         label.translatesAutoresizingMaskIntoConstraints = false
 
 		return label
@@ -53,12 +53,12 @@ class SynthViewController: UIViewController {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         setPlaybackStateTo(false)
-        parameterLabel.text = "Frequency: 0 Hz  Amplitude: 0%"
+        parameterLabel.text = formattedText(frequency: 0, amplitude: 0, isPlaying: Synth.shared.isPlaying())
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         setPlaybackStateTo(false)
-        parameterLabel.text = "Frequency: 0 Hz  Amplitude: 0%"
+        parameterLabel.text = formattedText(frequency: 0, amplitude: 0, isPlaying: Synth.shared.isPlaying())
     }
     
     // MARK: Selector Functions
@@ -71,6 +71,7 @@ class SynthViewController: UIViewController {
             case .sawtooth: Synth.shared.setWaveformTo(Oscillator.sawtooth)
             case .square: Synth.shared.setWaveformTo(Oscillator.square)
             case .whiteNoise: Synth.shared.setWaveformTo(Oscillator.whiteNoise)
+        @unknown default: Synth.shared.setWaveformTo(Oscillator.sine)
         }
     }
     
@@ -102,6 +103,10 @@ class SynthViewController: UIViewController {
         
         let amplitudePercent = Int(Oscillator.amplitude * 100)
         let frequencyHertz = Int(Oscillator.frequency)
-        parameterLabel.text = "Frequency: \(frequencyHertz) Hz  Amplitude: \(amplitudePercent)%"
+        parameterLabel.text = formattedText(frequency: frequencyHertz, amplitude: amplitudePercent, isPlaying: Synth.shared.isPlaying())
+    }
+    
+    func formattedText(frequency: Int, amplitude: Int, isPlaying: Bool) -> String {
+        return "Frequency: \(frequency) Hz  Amplitude: \(amplitude)%; \(isPlaying ? "Playing..." : "")"
     }
 }

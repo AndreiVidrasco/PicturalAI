@@ -93,4 +93,14 @@
     return _sourceNode;
 }
 
+- (BOOL)isPlaying {
+    //This implementation is continuation of the way initial developer decided to pause/play audio engine
+    //By changing volume
+    //In requirements, I receive clear message that I shouldn't change behaviour, althrough I consider that there are better options to implement
+    //For example instead of changing volume to 0, call on audio engine play/pause when needed
+    //This would be recommended behaviour by Apple and also will reduce power consumptions
+    //Please consider it for future changes
+    return self.volume > 0;
+}
+
 @end
