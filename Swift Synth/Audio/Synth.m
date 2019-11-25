@@ -77,18 +77,15 @@
 
 - (AVAudioSourceNode *)sourceNode {
     if (_sourceNode == nil) {
-        _sourceNode = [[AVAudioSourceNode alloc] initWithRenderBlock:^OSStatus(BOOL * _Nonnull isSilence, const AudioTimeStamp * _Nonnull timestamp, AVAudioFrameCount frameCount, AudioBufferList * _Nonnull outputData) {
-//            let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
-//
-//            for frame in 0..<Int(frameCount) {
-//                let sampleVal = self.signal(self.time)
-//                self.time += self.deltaTime
-//
-//                for buffer in ablPointer {
-//                    let buf: UnsafeMutableBufferPointer<Float> = UnsafeMutableBufferPointer(buffer)
-//                    buf[frame] = sampleVal
-//                }
-//            }
+        _sourceNode = [[AVAudioSourceNode alloc] initWithRenderBlock:^OSStatus(BOOL * _Nonnull isSilence, const AudioTimeStamp * _Nonnull timestamp, AVAudioFrameCount frameCount, AudioBufferList * _Nonnull audioBufferList) {
+            for (int frame = 0; frame < frameCount; frame++) {
+                float sampleVal = self.signal(self.time);
+                self.time += self.deltaTime;
+                for (int buffer = 0; buffer < audioBufferList->mNumberBuffers; buffer++) {
+                    float *buf = audioBufferList->mBuffers[buffer].mData;
+                    buf[frame] = sampleVal;
+                }
+            }
             return noErr;
         }];
     }
